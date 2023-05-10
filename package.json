@@ -1,7 +1,7 @@
 {
-  "name": "restsession",
-  "version": "1.4.0",
-  "description": "A session store based on a HTTP session REST api",
+  "name": "express-restful-store",
+  "version": "1.5.0",
+  "description": "A RESTful store for Express.js Sessions",
   "main": "index.js",
   "author": {
     "name": "Alexander Jank",
@@ -9,11 +9,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.17.1"
+    "axios": "^1.4.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jankal/restsession.git"
+    "url": "https://github.com/dig1t/express-restful-store.git"
   },
   "devDependencies": {}
 }

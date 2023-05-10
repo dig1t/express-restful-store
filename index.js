@@ -1,69 +1,54 @@
-const axios = require('axios')
+import axios from 'axios'
+import { Store } from 'express-session'
 
-module.exports = function (session) {
-  var Store = session.Store;
-
-  function RestStore (endpoint) {
-    var self = this
-
-    endpoint = endpoint || '127.0.0.1'
-    Store.call(self)
-
-    self.endpoint = endpoint
+class RestStore extends Store {
+  constructor(endpoint = '127.0.0.1') {
+    super()
+    
+    this.endpoint = endpoint
   }
-
-  RestStore.prototype.__proto__ = Store.prototype
-
-  RestStore.prototype.get = function (sid, callback) {
-    axios.get(this.endpoint + '/' + sid).then(function ({data}) {
-      callback(null, data)
-    }).catch(function (e) {
-      if (typeof e.response != 'undefined' && e.response.status === 404) {
-          callback(null, null)
-          return
-      }
-      callback(e)
-    })
+  
+  get(sessionId, callback) {
+    axios.get(`${this.endpoint}/${sessionId}`)
+      .then(({ data }) => callback(null, data))
+      .catch((error) => {
+        if (typeof error.response !== 'undefined' && error.response.status === 404) {
+            return callback(null, null)
+        }
+        
+        callback(error)
+      })
   }
-
-  RestStore.prototype.set = function (sid, data, callback) {
-    axios.post(this.endpoint + '/' + sid, data).then(function () {
-      callback()
-    }).catch(function (e) {
-      callback(e)
-    })
+  
+  set(sessionId, data, callback) {
+    axios.post(`${this.endpoint}/${sessionId}`, data)
+      .then(() => callback())
+      .catch(callback)
   }
-
-  RestStore.prototype.destroy = function (sid, callback) {
-    axios.delete(this.endpoint + '/' + sid).then(function () {
-      callback()
-    }).catch(function (e) {
-      callback(e)
-    })
+  
+  destroy(sessionId, callback) {
+    axios.delete(`${this.endpoint}/${sessionId}`)
+      .then(() => callback())
+      .catch(callback)
   }
-
-  RestStore.prototype.clear = function (callback) {
-    axios.delete(this.endpoint).then(function () {
-      callback()
-    }).catch(function (e) {
-      callback(e)
-    })
+  
+  clear(callback) {
+    axios.delete(this.endpoint)
+      .then(() => callback())
+      .catch(callback)
   }
-
-  RestStore.prototype.all = function (callback) {
-    axios.get(this.endpoint).then(function ({data}) {
-      callback(null, data)
-    }).catch(function (e) {
-      callback(e)
-    })
+  
+  all(callback) {
+    axios.get(this.endpoint)
+      .then(({ data }) => callback(null, data))
+      .catch(callback)
   }
-
-  RestStore.prototype.touch = function (sid, data, callback) {
-    axios.post(this.endpoint + '/' + sid + '?ping', data).then(function () {
-      callback()
-    }).catch(function (e) {
-      callback(e)
-    })
+  
+  touch(sessionId, data, callback) {
+    axios.post(`${this.endpoint}/${sessionId}?ping`, data)
+      .then(() => callback())
+      .catch(callback)
   }
-  return RestStore
 }
+
+export default RestStore

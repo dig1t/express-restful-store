@@ -1,20 +1,18 @@
-# restsession
-[![NPM Version][npm-version-image]][npm-url]
-[![NPM Downloads][npm-downloads-image]][npm-url]
+# Express.js RESTful Store
+This is an ESM-only module, it must be imported using the `import` declaration or the `import()` syntax. It cannot be required from a CommonJS module.
 
 ## Usage in express
 Example:
 ```javascript
 import express from 'express'
 import session from 'express-session'
-import restsession from 'restsession'
+import RestStore from './index.js'
 
 const app = express()
-const HTTPStore = restsession(session)
 
 app.use(session({
-  secret: 'Kgqnq5YsquMjEZd3TX',
-  store: new HTTPStore('http://127.0.0.1:1200/sessions'),
+  secret: 'xxxxxxxxxxxxxxxx',
+  store: new RestStore('http://127.0.0.1/sessions'),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
@@ -23,39 +21,39 @@ app.use(session({
   saveUninitialized: false,
   resave: false
 }))
-
 ```
 
 ## RESTful API Specification (endpoint)
+
 ### Get list of all Sessions
 ---
 
-Request:
+Request
 
 ```
 GET /
 ```
 
-Response: 
+Response
 
 ```json
 [
   {
     "key": "value"
   },
-  ... sessions
+  ...sessions
 ]
 ```
 
 ### Remove everything
 ----
 
-Request:
+Request
 ```
 DELETE /
 ```
 
-Reponse:
+Reponse
 ```json
 {
   "status": "OK"
@@ -69,14 +67,14 @@ Reponse:
 GET /{sid}
 ```
 
-Response:
+Response
 
 ```json
 {
   "key": "value"
 }
 ```
-If the session doesn't exists, The API should throw a HTTP 404 Not Found
+If the session doesn't exist, the API should respond with a 404 error code.
 
 ### Delete one Session
 ---
@@ -84,7 +82,7 @@ If the session doesn't exists, The API should throw a HTTP 404 Not Found
 DELETE /{sid}
 ```
 
-Reponse:
+Reponse
 
 ```json
 {
@@ -95,7 +93,7 @@ Reponse:
 ### Add one Session
 ---
 
-Request:
+Request
 
 ```json
 POST /{sid}
@@ -105,7 +103,7 @@ POST /{sid}
 }
 ```
 
-Response:
+Response
 
 ```json
 {
@@ -115,7 +113,3 @@ Response:
 
 This can also be used in conjuction with the `?ping` URL parameter. Then the API is able to update any existing expire times of the session if any.
 If the session with `{sid}` already exists, the API should update that one.
-
-[npm-version-image]: https://img.shields.io/npm/v/restsession.svg?style=flat-square
-[npm-downloads-image]: https://img.shields.io/npm/dm/restsession.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/restsession
